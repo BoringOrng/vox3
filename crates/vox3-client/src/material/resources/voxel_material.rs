@@ -51,7 +51,7 @@ impl FromWorld for VoxelMaterial {
     fn from_world(world: &mut World) -> Self {
         // temporary until we bother with multiple textures
         let mut image = Image::from_buffer(
-            include_bytes!("../../../assets/textures/block/dirt.png"),
+            include_bytes!("../../../../../assets/textures/block/dirt.png"),
             ImageType::Extension("png"),
             CompressedImageFormats::NONE,
             true, // is_srgb

@@ -3,6 +3,7 @@ use vox3_world::position::sets::PositionSystems;
 
 use crate::position::{resources::RenderOrigin, systems};
 
+#[derive(Default)]
 pub struct PositionPlugin;
 
 impl Plugin for PositionPlugin {

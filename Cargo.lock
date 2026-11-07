@@ -6783,12 +6783,23 @@ checksum = "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
 name = "vox3"
 version = "0.1.0"
 dependencies = [
+ "bevy",
+ "bevy-inspector-egui",
+ "tracing",
+ "vox3-client",
+ "vox3-gen",
+ "vox3-sim",
+ "vox3-world",
+]
+
+[[package]]
+name = "vox3-client"
+version = "0.1.0"
+dependencies = [
  "aeronet_replicon",
  "aeronet_websocket",
  "bevy",
- "bevy-inspector-egui",
  "bevy_replicon",
- "tracing",
  "vox3-gen",
  "vox3-sim",
  "vox3-world",

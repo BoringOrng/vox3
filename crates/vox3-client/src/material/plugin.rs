@@ -2,6 +2,7 @@ use bevy::prelude::*;
 
 use crate::material::resources::VoxelMaterial;
 
+#[derive(Default)]
 pub struct MaterialPlugin;
 
 impl Plugin for MaterialPlugin {

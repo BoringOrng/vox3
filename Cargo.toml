@@ -7,16 +7,12 @@ edition.workspace = true
 bevy.workspace = true
 tracing.workspace = true
 
-bevy_replicon = { workspace = true, features = ["client"] }
-aeronet_replicon = { workspace = true, features = ["client"] }
+vox3-client.workspace = true
+vox3-gen.workspace = true
+vox3-sim.workspace = true
+vox3-world.workspace = true
 
 bevy-inspector-egui = { version = "0.38.0", optional = true }
-
-vox3-world.workspace = true
-vox3-sim.workspace = true
-vox3-gen.workspace = true
-
-aeronet_websocket = { workspace = true, features = ["client"] }
 
 [lints]
 workspace = true
@@ -67,6 +63,7 @@ aeronet_websocket = "0.22.0"
 bevy_replicon = "0.45.5"
 derive_more = { version = "2.1.1", features = ["full"] }
 
+vox3-client.path = "crates/vox3-client"
 vox3-sim.path = "crates/vox3-sim"
 vox3-gen.path = "crates/vox3-gen"
 vox3-world.path = "crates/vox3-world"

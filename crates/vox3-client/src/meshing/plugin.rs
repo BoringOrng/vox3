@@ -3,6 +3,7 @@ use vox3_world::position::sets::PositionSystems;
 
 use crate::meshing::systems;
 
+#[derive(Default)]
 pub struct MeshingPlugin;
 
 impl Plugin for MeshingPlugin {
