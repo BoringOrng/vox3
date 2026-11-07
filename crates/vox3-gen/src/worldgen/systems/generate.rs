@@ -4,10 +4,12 @@ use bevy::{
     prelude::*,
     tasks::{AsyncComputeTaskPool, block_on, poll_once},
 };
+use vox3_world::position::components::ChunkPos;
 
 use crate::worldgen::{
     components::Generated,
     resources::{WorldgenPasses, gen_state::GenState},
+    traits::gen_pass::{GenContext, NeighborChunkData},
 };
 
 #[expect(clippy::needless_pass_by_value)]
@@ -16,10 +18,10 @@ pub fn spawn_generate_tasks(passes: Res<WorldgenPasses>, mut gen_state: ResMut<G
         return;
     }
 
-    let pool = AsyncComputeTaskPool::get();
+    let mut jobs = Vec::new();
 
-    for (&pos, slot) in &mut gen_state.slots {
-        if slot.running.is_some() {
+    for (&pos, slot) in &gen_state.slots {
+        if slot.complete || slot.running.is_some() {
             continue;
         }
 
@@ -28,10 +30,26 @@ pub fn spawn_generate_tasks(passes: Res<WorldgenPasses>, mut gen_state: ResMut<G
             continue;
         };
 
-        let pass = Arc::clone(pass);
-        let prev = slot.history.last().cloned();
+        let Some(neighbors) = neighbors_for_stage(pos, stage, pass.reach(), &gen_state) else {
+            continue;
+        };
 
-        slot.running = Some(pool.spawn(async move { pass.run(pos, prev) }));
+        jobs.push((
+            pos,
+            Arc::clone(pass),
+            GenContext {
+                pos,
+                previous: slot.history.last().cloned(),
+                neighbors,
+            },
+        ));
+    }
+
+    let pool = AsyncComputeTaskPool::get();
+    for (pos, pass, context) in jobs {
+        if let Some(slot) = gen_state.slots.get_mut(&pos) {
+            slot.running = Some(pool.spawn(async move { pass.run(context) }));
+        }
     }
 }
 
@@ -45,9 +63,7 @@ pub fn poll_generation_tasks(
         return;
     }
 
-    let mut finished = Vec::new();
-
-    for (&pos, slot) in &mut gen_state.slots {
+    for slot in gen_state.slots.values_mut() {
         let Some(task) = slot.running.as_mut() else {
             continue;
         };
@@ -59,17 +75,47 @@ pub fn poll_generation_tasks(
         slot.running = None;
 
         if slot.history.len() + 1 == passes.len() {
+            slot.complete = true;
+
             commands
                 .entity(slot.chunk_entity)
                 .insert((chunk_data, Generated));
-
-            finished.push(pos);
         } else {
             slot.history.push(Arc::new(chunk_data));
         }
     }
+}
 
-    for pos in finished {
-        gen_state.slots.remove(&pos);
+fn neighbors_for_stage(
+    pos: ChunkPos,
+    stage: usize,
+    reach: u32,
+    gen_state: &GenState,
+) -> Option<Vec<NeighborChunkData>> {
+    if stage == 0 || reach == 0 {
+        return Some(Vec::new());
     }
+
+    let radius = i32::try_from(reach).ok()?;
+    let mut neighbors = Vec::new();
+
+    for x in -radius..=radius {
+        for y in -radius..=radius {
+            for z in -radius..=radius {
+                if x == 0 && y == 0 && z == 0 {
+                    continue;
+                }
+
+                let neighbor_pos = pos + ChunkPos::from_ivec3(IVec3::new(x, y, z));
+                let slot = gen_state.slots.get(&neighbor_pos)?;
+                let previous = slot.history.get(stage - 1)?.clone();
+                neighbors.push(NeighborChunkData {
+                    pos: neighbor_pos,
+                    data: previous,
+                });
+            }
+        }
+    }
+
+    Some(neighbors)
 }

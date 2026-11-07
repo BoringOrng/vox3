@@ -15,6 +15,8 @@ pub struct ChunkSlot {
 
     pub(in crate::worldgen) chunk_entity: Entity,
 
+    pub(in crate::worldgen) complete: bool,
+
     #[reflect(ignore)]
     pub(in crate::worldgen) running: Option<Task<ChunkData>>,
 }
@@ -25,6 +27,7 @@ impl ChunkSlot {
         Self {
             history: default(),
             chunk_entity,
+            complete: false,
             running: default(),
         }
     }

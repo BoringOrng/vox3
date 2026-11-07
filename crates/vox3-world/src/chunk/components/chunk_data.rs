@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{coords::ChunkLocalPos, storage::PVec};
 
-#[derive(Component, Reflect, Default, Debug, Serialize, Deserialize)]
+#[derive(Component, Reflect, Default, Debug, Serialize, Deserialize, Clone)]
 pub struct ChunkData(PVec<bool>);
 
 impl ChunkData {
