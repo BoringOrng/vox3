@@ -1,0 +1,97 @@
+[package]
+name = "vox3"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+bevy.workspace = true
+tracing.workspace = true
+
+bevy_replicon = { workspace = true, features = ["client"] }
+aeronet_replicon = { workspace = true, features = ["client"] }
+
+bevy-inspector-egui = { version = "0.38.0", optional = true }
+
+vox3-world.workspace = true
+vox3-sim.workspace = true
+vox3-gen.workspace = true
+
+aeronet_websocket = { workspace = true, features = ["client"] }
+
+[lints]
+workspace = true
+
+[features]
+default = ["dev_native"]
+
+dev_native = [
+  "dev",
+  "bevy/file_watcher",
+  "bevy/embedded_watcher",
+]
+
+dev = [
+  "bevy/debug",
+  "bevy/dynamic_linking",
+  "bevy/bevy_dev_tools",
+  "bevy/bevy_ui_debug",
+  "bevy/track_location",
+
+  "dep:bevy-inspector-egui",
+]
+
+[workspace]
+resolver = "3"
+members = ["crates/vox3-*"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+
+[workspace.dependencies.bevy]
+version = "0.20.1"
+default-features = false
+features = ["3d", "audio", "ui", "free_camera"]
+
+[workspace.dependencies.tracing]
+version = "0.1"
+features = [
+  "max_level_debug",
+  "release_max_level_warn",
+]
+
+[workspace.dependencies]
+serde = { version = "1.0.229", features = ["derive"] }
+aeronet_replicon = "0.22.0"
+aeronet_websocket = "0.22.0"
+bevy_replicon = "0.45.5"
+derive_more = { version = "2.1.1", features = ["full"] }
+
+vox3-sim.path = "crates/vox3-sim"
+vox3-gen.path = "crates/vox3-gen"
+vox3-world.path = "crates/vox3-world"
+
+[workspace.lints.clippy.pedantic]
+level = "warn"
+priority = -1
+
+[workspace.lints.clippy.nursery]
+level = "warn"
+priority = -1
+
+[workspace.lints.clippy]
+# add overrides if I feel like it
+
+[profile.dev]
+opt-level = 1
+
+[profile.dev.package."*"]
+debug = false
+opt-level = 3
+
+[profile.dev.package.wgpu-types]
+debug-assertions = false
+
+[profile.release]
+codegen-units = 1
+lto = "thin"

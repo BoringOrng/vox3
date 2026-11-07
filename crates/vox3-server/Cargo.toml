@@ -1,0 +1,16 @@
+[package]
+name = "vox3-server"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+bevy.workspace = true
+
+vox3-world.workspace = true
+vox3-sim.workspace = true
+bevy_replicon = { workspace = true, features = ["server"] }
+aeronet_replicon = { workspace = true, features = ["server"] }
+aeronet_websocket = { workspace = true, features = ["server"] }
+
+[lints]
+workspace = true

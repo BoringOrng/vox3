@@ -1,0 +1,13 @@
+[package]
+name = "vox3-world"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+bevy.workspace = true
+serde.workspace = true
+derive_more.workspace = true
+bevy_replicon.workspace = true
+
+[lints]
+workspace = true

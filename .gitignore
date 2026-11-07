@@ -1,0 +1,16 @@
+/*
+
+/assets/textures/
+
+.DS_Store
+
+!/assets
+!/crates
+!/src
+
+!/Cargo.*
+!/flake.*
+!/LICENSE-*
+
+!/.gitignore
+!/wesl.toml
