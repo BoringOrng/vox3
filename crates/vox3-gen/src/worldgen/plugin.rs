@@ -17,7 +17,8 @@ impl Plugin for WorldgenPlugin {
         app.configure_sets(
             FixedUpdate,
             (
-                WorldgenSystems::Populate.after(StreamingSystems::Process),
+                WorldgenSystems::Prune.after(StreamingSystems::Process),
+                WorldgenSystems::Populate,
                 WorldgenSystems::Generate,
             )
                 .chain(),
@@ -27,6 +28,7 @@ impl Plugin for WorldgenPlugin {
         .add_systems(
             FixedUpdate,
             (
+                systems::prune::prune_gen_state.in_set(WorldgenSystems::Prune),
                 systems::populate::populate_gen_state.in_set(WorldgenSystems::Populate),
                 (
                     systems::generate::spawn_generate_tasks,

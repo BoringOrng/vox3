@@ -12,7 +12,7 @@ use crate::worldgen::{
 
 #[expect(clippy::needless_pass_by_value)]
 pub fn spawn_generate_tasks(passes: Res<WorldgenPasses>, mut gen_state: ResMut<GenState>) {
-    if passes.is_empty() {
+    if passes.is_empty() || gen_state.slots.is_empty() {
         return;
     }
 
@@ -41,6 +41,10 @@ pub fn poll_generation_tasks(
     passes: Res<WorldgenPasses>,
     mut gen_state: ResMut<GenState>,
 ) {
+    if passes.is_empty() || gen_state.slots.is_empty() {
+        return;
+    }
+
     let mut finished = Vec::new();
 
     for (&pos, slot) in &mut gen_state.slots {
