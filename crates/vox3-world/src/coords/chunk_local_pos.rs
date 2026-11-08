@@ -1,4 +1,4 @@
-use bevy::prelude::*;
+use bevy::{math::U8Vec3, prelude::*};
 
 use crate::chunk::components::Chunk;
 
@@ -36,6 +36,11 @@ impl ChunkLocalPos {
     #[must_use]
     pub fn z(self) -> u8 {
         ((self.0 >> (2 * Self::SHIFT)) & u16::from(Self::MASK)) as u8
+    }
+
+    #[must_use]
+    pub fn as_ivec3(self) -> IVec3 {
+        U8Vec3::new(self.x(), self.y(), self.z()).as_ivec3()
     }
 
     pub(crate) const fn index(self) -> u16 {
