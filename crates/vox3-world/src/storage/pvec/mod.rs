@@ -6,7 +6,10 @@ use bevy::reflect::Reflect;
 use run::Run;
 use serde::{Deserialize, Serialize};
 
-use crate::storage::palette::{self, Palette};
+use crate::{
+    chunk::components::Chunk,
+    storage::palette::{self, Palette},
+};
 
 #[derive(Clone, Debug, Reflect, Serialize, Deserialize)]
 pub struct PVec<T: Copy + Eq + Reflect> {
@@ -159,7 +162,7 @@ impl<T: Copy + Eq + Reflect> PVec<T> {
     }
 
     fn run_end(&self, idx: usize) -> u16 {
-        self.runs.get(idx + 1).map_or(u16::MAX, |r| r.start())
+        self.runs.get(idx + 1).map_or(Chunk::VOLUME, |r| r.start())
     }
 
     fn merge_around(&mut self, idx: u16) {
